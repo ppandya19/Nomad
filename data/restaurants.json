@@ -1,0 +1,70 @@
+{
+  "New York": [
+    { "name": "Los Tacos No.1", "cat": "mexican", "cuisine": "Mexican", "meal": "lunch", "rating": "4.7", "reviews": "12.1k", "tags": ["Foodie"], "lat": 40.742, "lng": -74.0057 },
+    { "name": "Blue Bottle Coffee", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "rating": "4.5", "reviews": "3.4k", "tags": ["Foodie"], "lat": 40.7418, "lng": -74.005 },
+    { "name": "L'Artusi", "cat": "fine dine", "cuisine": "Italian", "meal": "dinner", "rating": "4.8", "reviews": "5.6k", "tags": ["Foodie", "Nightlife"], "lat": 40.7336, "lng": -74.0023 },
+    { "name": "Joe's Pizza", "cat": "local special", "cuisine": "Pizza", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Starbucks Reserve Roastery", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Gregorys Coffee", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Cosme", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Jajaja Mexicana", "cat": "mexican", "cuisine": "Mexican", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Katz's Delicatessen", "cat": "local special", "cuisine": "Deli", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Shake Shack", "cat": "local special", "cuisine": "Burgers", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Le Bernardin", "cat": "fine dine", "cuisine": "French", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Eleven Madison Park", "cat": "fine dine", "cuisine": "American", "meal": "dinner", "tags": ["Foodie"] }
+  ],
+  "Chicago": [
+    { "name": "Lou Malnati's", "cat": "local special", "cuisine": "Deep dish", "meal": "lunch", "rating": "4.6", "reviews": "9.8k", "tags": ["Foodie"], "lat": 41.8881, "lng": -87.6351 },
+    { "name": "Intelligentsia Coffee", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "rating": "4.6", "reviews": "2.1k", "tags": ["Foodie"], "lat": 41.8825, "lng": -87.6245 },
+    { "name": "Girl & the Goat", "cat": "fine dine", "cuisine": "New American", "meal": "dinner", "rating": "4.8", "reviews": "7.7k", "tags": ["Foodie", "Nightlife"], "lat": 41.8841, "lng": -87.6579 },
+    { "name": "Frontera Grill", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Starbucks Reserve Roastery Chicago", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Dark Matter Coffee", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Topolobampo", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Big Star", "cat": "mexican", "cuisine": "Mexican", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Portillo's", "cat": "local special", "cuisine": "Hot Dogs", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Al's #1 Italian Beef", "cat": "local special", "cuisine": "Italian Beef", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Alinea", "cat": "fine dine", "cuisine": "American", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Oriole", "cat": "fine dine", "cuisine": "American", "meal": "dinner", "tags": ["Foodie"] }
+  ],
+  "Miami": [
+    { "name": "Versailles", "cat": "local special", "cuisine": "Cuban", "meal": "lunch", "rating": "4.6", "reviews": "15.2k", "tags": ["Foodie", "Culture lover"], "lat": 25.7651, "lng": -80.2195 },
+    { "name": "Panther Coffee", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "rating": "4.7", "reviews": "2.8k", "tags": ["Foodie"], "lat": 25.8009, "lng": -80.1995 },
+    { "name": "Coyo Taco", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "rating": "4.5", "reviews": "6.3k", "tags": ["Foodie", "Nightlife"], "lat": 25.7725, "lng": -80.1305 },
+    { "name": "COTE Miami", "cat": "fine dine", "cuisine": "Korean Steakhouse", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Threefold Cafe", "cat": "coffee", "cuisine": "Cafe", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Maman", "cat": "coffee", "cuisine": "Cafe", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Bakan", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Tacombi", "cat": "mexican", "cuisine": "Mexican", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "La Sandwicherie", "cat": "local special", "cuisine": "Sandwiches", "meal": "lunch", "tags": ["Foodie"] },
+    { "name": "Joe's Stone Crab", "cat": "local special", "cuisine": "Seafood", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Stubborn Seed", "cat": "fine dine", "cuisine": "American", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Zuma Miami", "cat": "fine dine", "cuisine": "Japanese", "meal": "dinner", "tags": ["Foodie"] }
+  ],
+  "Italy": [
+    { "name": "Roscioli", "cat": "local special", "cuisine": "Roman", "meal": "lunch", "rating": "4.7", "reviews": "8.2k", "tags": ["Foodie"], "lat": 41.8937, "lng": 12.4748 },
+    { "name": "La Pergola", "cat": "fine dine", "cuisine": "Italian", "meal": "dinner", "rating": "4.9", "reviews": "3.1k", "tags": ["Foodie", "Nightlife"], "lat": 41.9225, "lng": 12.4516 },
+    { "name": "All'Antico Vinaio", "cat": "local special", "cuisine": "Sandwiches", "meal": "lunch", "rating": "4.8", "reviews": "21k", "tags": ["Foodie"], "lat": 43.7679, "lng": 11.2557 },
+    { "name": "Trattoria Mario", "cat": "local special", "cuisine": "Tuscan", "meal": "lunch", "rating": "4.6", "reviews": "6.4k", "tags": ["Foodie"], "lat": 43.7746, "lng": 11.2543 },
+    { "name": "Harry's Bar", "cat": "fine dine", "cuisine": "Italian", "meal": "dinner", "rating": "4.5", "reviews": "4.9k", "tags": ["Foodie", "Nightlife"], "lat": 45.4332, "lng": 12.3384 },
+    { "name": "Sant'Eustachio Il Caffè", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Caffè Florian", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Tazza d'Oro", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Osteria Francescana", "cat": "fine dine", "cuisine": "Italian", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "La Cucaracha", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "tags": ["Foodie"] }
+  ],
+  "Mumbai": [
+    { "name": "Bastian Beach Club", "cat": "fine dine", "cuisine": "Seafood", "meal": "dinner", "rating": "4.6", "reviews": "5.2k", "tags": ["Foodie", "Nightlife"], "lat": 19.107, "lng": 72.8262 },
+    { "name": "Sukh Sagar", "cat": "local special", "cuisine": "Street food", "meal": "lunch", "rating": "4.5", "reviews": "9.1k", "tags": ["Foodie"], "lat": 18.9515, "lng": 72.8195 },
+    { "name": "Bachelorr's", "cat": "local special", "cuisine": "Fast Food", "meal": "lunch", "rating": "4.4", "reviews": "7.8k", "tags": ["Foodie"], "lat": 18.953, "lng": 72.82 },
+    { "name": "Cream Centre", "cat": "local special", "cuisine": "North Indian", "meal": "dinner", "rating": "4.5", "reviews": "6.6k", "tags": ["Foodie"], "lat": 18.9518, "lng": 72.8193 },
+    { "name": "Parsi Dairy Farm", "cat": "local special", "cuisine": "Parsi", "meal": "lunch", "rating": "4.7", "reviews": "4.3k", "tags": ["Foodie"], "lat": 18.9469, "lng": 72.8297 },
+    { "name": "Prithvi Cafe", "cat": "coffee", "cuisine": "Cafe", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Trishna", "cat": "fine dine", "cuisine": "Seafood", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Kala Ghoda Café", "cat": "coffee", "cuisine": "Cafe", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Blue Tokai", "cat": "coffee", "cuisine": "Coffee", "meal": "coffee", "tags": ["Foodie"] },
+    { "name": "Wasabi by Morimoto", "cat": "fine dine", "cuisine": "Japanese", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Sancho's", "cat": "mexican", "cuisine": "Mexican", "meal": "dinner", "tags": ["Foodie"] },
+    { "name": "Taco Bell", "cat": "mexican", "cuisine": "Mexican", "meal": "lunch", "tags": ["Foodie"] }
+  ]
+}

@@ -1,26 +1,156 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-ground: #fafafa;
+  --color-ink: #262626;
+  --color-hairline: #dbdbdb;
+  --color-igblue: #0095f6;
+  --color-igpink: #e1306c;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ground);
+  color: var(--color-ink);
+}
+
+::selection {
+  background: var(--color-igpink);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-igblue);
+  outline-offset: 2px;
+}
+
+input {
+  caret-color: var(--color-igblue);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.ig-gradient {
+  background: linear-gradient(45deg, #833ab4, #fd1d1d 55%, #fcb045);
+}
+
+.rail-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink) transparent;
+}
+.rail-scroll::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.rail-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-ink);
+}
+
+/* IG embeds: contain unprocessed boxes so fallback text can't overlap,
+   and hide the fallback link once the iframe renders. */
+.instagram-media {
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  background: #fff;
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.instagram-media:not(:has(iframe)) {
+  min-height: 200px;
+  display: grid;
+  place-items: center;
+}
+.instagram-media:has(iframe) > a {
+  display: none;
+}
+
+.t-ink {
+  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-view {
+  animation: view-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-pop {
+  animation: pop-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-view, .animate-pop { animation: none; }
+  .t-ink { transition: none; }
+  .hint-dot, .hint-ping { animation: none !important; }
+}
+
+/* Page-hint badges: entrance pop (staggered inline) + endless sonar ping.
+   Decorative only — dot size/colors live inline so stale CSS can't break them. */
+@keyframes hint-pop {
+  0% { opacity: 0; transform: scale(0.4); }
+  60% { opacity: 1; transform: scale(1.18); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.hint-dot {
+  animation: hint-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes hint-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+.hint-ping {
+  animation: hint-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Hint spotlight: dim-everything layer + highlight ring glide between targets.
+   Geometry and paint live inline; only motion lives here. */
+@keyframes hint-fade {
+  from { opacity: 0; }
+}
+.hint-dim, .hint-ring {
+  animation: hint-fade 0.25s ease-out;
+  transition: top 0.32s cubic-bezier(0.16, 1, 0.3, 1), left 0.32s cubic-bezier(0.16, 1, 0.3, 1), width 0.32s cubic-bezier(0.16, 1, 0.3, 1), height 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hint-dim, .hint-ring { animation: none; transition: none; }
+}
+
+/* Reels rail: decorative layer only. Sizing, positioning, and text
+   contrast are inline in the markup so a stale cached stylesheet can
+   never break them (see the Day2 invisible-buttons lesson). */
+.reel-card {
+  background: #fff;
+  border: 1px solid var(--color-hairline);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgb(38 38 38 / 0.06), 0 8px 24px -16px rgb(38 38 38 / 0.25);
+}
+.reel-card .instagram-media {
+  border: none;
+  border-radius: 0;
+}
+.reel-tile {
+  isolation: isolate;
+  box-shadow: 0 1px 2px rgb(38 38 38 / 0.08), 0 8px 24px -16px rgb(38 38 38 / 0.3);
+}
+.reel-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.45));
+}
+.reel-tile-play {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
 }

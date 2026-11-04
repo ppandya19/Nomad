@@ -1,0 +1,32 @@
+{
+  "New York": [
+    { "name": "The Plaza Hotel", "area": "Midtown", "price": "$$$", "rating": "4.6", "reviews": "9.4k", "tags": ["Culture lover", "Nightlife"], "lat": 40.7644, "lng": -73.9737 },
+    { "name": "The High Line Hotel", "area": "Chelsea", "price": "$$", "rating": "4.5", "reviews": "3.1k", "tags": ["Culture lover", "Outdoors"], "lat": 40.744, "lng": -74.0058 },
+    { "name": "Arlo Midtown", "area": "Midtown", "price": "$$", "rating": "4.4", "reviews": "4.8k", "tags": ["Nightlife", "Foodie"], "lat": 40.7555, "lng": -73.9903 },
+    { "name": "Pod 51", "area": "Midtown East", "price": "$", "rating": "4.1", "reviews": "6.2k", "tags": ["Foodie", "Outdoors"], "lat": 40.7538, "lng": -73.9722 }
+  ],
+  "Chicago": [
+    { "name": "Chicago Athletic Association Hotel", "area": "Loop", "price": "$$", "rating": "4.6", "reviews": "5.5k", "tags": ["Culture lover", "Nightlife"], "lat": 41.8797, "lng": -87.6243 },
+    { "name": "The Blackstone Hotel", "area": "Loop", "price": "$$", "rating": "4.4", "reviews": "4.1k", "tags": ["Culture lover", "Foodie"], "lat": 41.8717, "lng": -87.6244 },
+    { "name": "The Hoxton Chicago", "area": "River West", "price": "$$", "rating": "4.5", "reviews": "2.8k", "tags": ["Nightlife", "Foodie"], "lat": 41.8917, "lng": -87.628 },
+    { "name": "Acme Hotel Company", "area": "River North", "price": "$", "rating": "4.3", "reviews": "3.4k", "tags": ["Nightlife", "Outdoors"], "lat": 41.8902, "lng": -87.6293 }
+  ],
+  "Miami": [
+    { "name": "Fontainebleau Miami Beach", "area": "Mid Beach", "price": "$$$", "rating": "4.4", "reviews": "18.2k", "tags": ["Nightlife", "Outdoors"], "lat": 25.8179, "lng": -80.122 },
+    { "name": "The Betsy South Beach", "area": "South Beach", "price": "$$$", "rating": "4.7", "reviews": "2.1k", "tags": ["Culture lover", "Foodie"], "lat": 25.7706, "lng": -80.1305 },
+    { "name": "Faena Hotel Miami Beach", "area": "Mid Beach", "price": "$$$", "rating": "4.6", "reviews": "3.7k", "tags": ["Culture lover", "Nightlife"], "lat": 25.782, "lng": -80.129 },
+    { "name": "Kimpton Angler's Hotel", "area": "South Beach", "price": "$$", "rating": "4.5", "reviews": "1.9k", "tags": ["Outdoors", "Foodie"], "lat": 25.78, "lng": -80.131 }
+  ],
+  "Italy": [
+    { "name": "Hotel Artemide", "area": "Rome", "price": "$$", "rating": "4.6", "reviews": "4.4k", "tags": ["Culture lover", "Foodie"], "lat": 41.9036, "lng": 12.4942 },
+    { "name": "The First Roma", "area": "Rome", "price": "$$$", "rating": "4.5", "reviews": "1.6k", "tags": ["Nightlife", "Culture lover"], "lat": 41.9055, "lng": 12.4777 },
+    { "name": "Hotel Brunelleschi", "area": "Florence", "price": "$$$", "rating": "4.6", "reviews": "2.3k", "tags": ["Culture lover", "Foodie"], "lat": 43.7707, "lng": 11.255 },
+    { "name": "The Gritti Palace", "area": "Venice", "price": "$$$", "rating": "4.8", "reviews": "1.2k", "tags": ["Culture lover", "Nightlife"], "lat": 45.4319, "lng": 12.3336 }
+  ],
+  "Mumbai": [
+    { "name": "The Taj Mahal Palace", "area": "Colaba", "price": "$$$", "rating": "4.8", "reviews": "22.5k", "tags": ["Culture lover", "Foodie"], "lat": 18.9217, "lng": 72.833 },
+    { "name": "The Oberoi Mumbai", "area": "Marine Drive", "price": "$$$", "rating": "4.7", "reviews": "9.8k", "tags": ["Nightlife", "Culture lover"], "lat": 18.924, "lng": 72.82 },
+    { "name": "Taj Lands End", "area": "Bandra", "price": "$$$", "rating": "4.6", "reviews": "11.3k", "tags": ["Outdoors", "Foodie"], "lat": 19.0419, "lng": 72.8194 },
+    { "name": "Trident Bandra Kurla", "area": "Bandra Kurla", "price": "$$", "rating": "4.5", "reviews": "7.6k", "tags": ["Foodie", "Outdoors"], "lat": 19.065, "lng": 72.867 }
+  ]
+}

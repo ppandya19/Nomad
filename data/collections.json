@@ -1,0 +1,91 @@
+[
+  {
+    "id": "nyc-weekend",
+    "name": "NYC weekend",
+    "city": "New York",
+    "covers": ["https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Lehman_Brothers_Times_Square_by_David_Shankbone.jpg/500px-Lehman_Brothers_Times_Square_by_David_Shankbone.jpg", "Chelsea Market", "Brooklyn Bridge"],
+    "posts": [
+      { "place": "Times Square", "lat": 40.758, "lng": -73.9855, "img": "nomad-nyc-ts-1", "reelUrl": "https://www.instagram.com/reel/DS9O2qwDMzj/" },
+      { "place": "Chelsea Market", "lat": 40.7424, "lng": -74.0061, "img": "nomad-nyc-chelsea-1", "reelUrl": "" },
+      { "place": "The High Line", "lat": 40.7479, "lng": -74.0049, "img": "nomad-nyc-highline-1", "reelUrl": "" },
+      { "place": "Top of the Rock", "lat": 40.7587, "lng": -73.9787, "img": "nomad-nyc-toprock-1", "reelUrl": "https://www.instagram.com/reel/DfFrRC2Iv7u/" },
+      { "place": "Central Park", "lat": 40.7812, "lng": -73.9665, "img": "nomad-nyc-central-1", "reelUrl": "" },
+      { "place": "Brooklyn Bridge", "lat": 40.7061, "lng": -73.9969, "img": "nomad-nyc-brooklyn-1", "reelUrl": "" },
+      { "place": "Statue of Liberty", "lat": 40.6892, "lng": -74.0445, "img": "nomad-nyc-liberty-1", "reelUrl": "" },
+      { "place": "Empire State Building", "lat": 40.7484, "lng": -73.9857, "img": "nomad-nyc-empire-1", "reelUrl": "" },
+      { "place": "One World Trade Center", "lat": 40.7127, "lng": -74.0134, "img": "nomad-nyc-wtc-1", "reelUrl": "" },
+      { "place": "The Met", "lat": 40.7794, "lng": -73.9632, "img": "nomad-nyc-met-1", "reelUrl": "" },
+      { "place": "MoMA", "lat": 40.7614, "lng": -73.9776, "img": "nomad-nyc-moma-1", "reelUrl": "" },
+      { "place": "Bryant Park", "lat": 40.7536, "lng": -73.9832, "img": "nomad-nyc-bryant-1", "reelUrl": "" },
+      { "place": "Grand Central Terminal", "lat": 40.7527, "lng": -73.9772, "img": "nomad-nyc-grandcentral-1", "reelUrl": "" },
+      { "place": "Washington Square Park", "lat": 40.7308, "lng": -73.9973, "img": "nomad-nyc-wsp-1", "reelUrl": "" },
+      { "place": "Wall Street", "lat": 40.7074, "lng": -74.0113, "img": "nomad-nyc-wallst-1", "reelUrl": "" }
+    ]
+  },
+  {
+    "id": "chi-eats",
+    "name": "Chicago eats",
+    "city": "Chicago",
+    "posts": [
+      { "place": "Cloud Gate", "lat": 41.8826, "lng": -87.6244, "img": "nomad-chi-bean-1", "reelUrl": "" },
+      { "place": "Willis Tower", "lat": 41.8789, "lng": -87.6359, "img": "nomad-chi-willis-1", "reelUrl": "" },
+      { "place": "Navy Pier", "lat": 41.8917, "lng": -87.606, "img": "nomad-chi-navy-1", "reelUrl": "" },
+      { "place": "Buckingham Fountain", "lat": 41.8758, "lng": -87.6189, "img": "nomad-chi-buckingham-1", "reelUrl": "" },
+      { "place": "Field Museum", "lat": 41.8663, "lng": -87.617, "img": "nomad-chi-field-1", "reelUrl": "" },
+      { "place": "Shedd Aquarium", "lat": 41.8676, "lng": -87.614, "img": "nomad-chi-shedd-1", "reelUrl": "" },
+      { "place": "Art Institute of Chicago", "lat": 41.8796, "lng": -87.6237, "img": "nomad-chi-art-1", "reelUrl": "" },
+      { "place": "Chicago Theatre", "lat": 41.8855, "lng": -87.6271, "img": "nomad-chi-theatre-1", "reelUrl": "" },
+      { "place": "Lincoln Park Zoo", "lat": 41.9211, "lng": -87.6339, "img": "nomad-chi-zoo-1", "reelUrl": "" },
+      { "place": "360 Chicago", "lat": 41.8988, "lng": -87.623, "img": "nomad-chi-360-1", "reelUrl": "" },
+      { "place": "Adler Planetarium", "lat": 41.8664, "lng": -87.6067, "img": "nomad-chi-adler-1", "reelUrl": "" },
+      { "place": "Chicago Riverwalk", "lat": 41.888, "lng": -87.624, "img": "nomad-chi-riverwalk-1", "reelUrl": "" },
+      { "place": "Griffin Museum of Science and Industry", "lat": 41.7908, "lng": -87.5829, "img": "nomad-chi-griffin-1", "reelUrl": "" },
+      { "place": "Magnificent Mile", "lat": 41.898, "lng": -87.624, "img": "nomad-chi-magmile-1", "reelUrl": "" },
+      { "place": "Garfield Park Conservatory", "lat": 41.8861, "lng": -87.7171, "img": "nomad-chi-garfield-1", "reelUrl": "" }
+    ]
+  },
+  {
+    "id": "italy-mix",
+    "name": "Italy mix",
+    "city": "Italy",
+    "posts": [
+      { "place": "Colosseum", "lat": 41.8902, "lng": 12.4922, "img": "nomad-ita-colosseum-1", "reelUrl": "" },
+      { "place": "Trevi Fountain", "lat": 41.9009, "lng": 12.4833, "img": "nomad-ita-trevi-1", "reelUrl": "" },
+      { "place": "Spanish Steps", "lat": 41.9058, "lng": 12.4823, "img": "nomad-ita-spanish-1", "reelUrl": "" },
+      { "place": "Sistine Chapel", "lat": 41.9029, "lng": 12.4545, "img": "nomad-ita-sistine-1", "reelUrl": "" },
+      { "place": "Vatican Museums", "lat": 41.9065, "lng": 12.4536, "img": "nomad-ita-vatican-1", "reelUrl": "" },
+      { "place": "Pantheon", "lat": 41.8986, "lng": 12.4769, "img": "nomad-ita-pantheon-1", "reelUrl": "" },
+      { "place": "Roman Forum", "lat": 41.8925, "lng": 12.4853, "img": "nomad-ita-forum-1", "reelUrl": "" },
+      { "place": "Florence Cathedral", "lat": 43.7731, "lng": 11.256, "img": "nomad-ita-duomo-1", "reelUrl": "" },
+      { "place": "Piazzale Michelangelo", "lat": 43.7629, "lng": 11.2649, "img": "nomad-ita-piazzale-1", "reelUrl": "" },
+      { "place": "Ponte Vecchio", "lat": 43.7679, "lng": 11.2531, "img": "nomad-ita-ponte-1", "reelUrl": "" },
+      { "place": "Uffizi Gallery", "lat": 43.7677, "lng": 11.255, "img": "nomad-ita-uffizi-1", "reelUrl": "" },
+      { "place": "Doge's Palace", "lat": 45.434, "lng": 12.3407, "img": "nomad-ita-doge-1", "reelUrl": "" },
+      { "place": "St Mark's Square", "lat": 45.4343, "lng": 12.338, "img": "nomad-ita-sanmarco-1", "reelUrl": "" },
+      { "place": "Rialto Bridge", "lat": 45.438, "lng": 12.3353, "img": "nomad-ita-rialto-1", "reelUrl": "" },
+      { "place": "Grand Canal", "lat": 45.4408, "lng": 12.3335, "img": "nomad-ita-canal-1", "reelUrl": "" }
+    ]
+  },
+  {
+    "id": "mumbai-icons",
+    "name": "Mumbai icons",
+    "city": "Mumbai",
+    "posts": [
+      { "place": "Gateway of India", "lat": 18.922, "lng": 72.8347, "img": "nomad-bom-gateway-1", "reelUrl": "" },
+      { "place": "Marine Drive", "lat": 18.943, "lng": 72.8238, "img": "nomad-bom-marine-1", "reelUrl": "" },
+      { "place": "Chhatrapati Shivaji Maharaj Terminus", "lat": 18.9401, "lng": 72.8355, "img": "nomad-bom-csmt-1", "reelUrl": "" },
+      { "place": "Juhu Beach", "lat": 19.1075, "lng": 72.8263, "img": "nomad-bom-juhu-1", "reelUrl": "" },
+      { "place": "Shree Siddhivinayak Temple", "lat": 19.0173, "lng": 72.8302, "img": "nomad-bom-siddhivinayak-1", "reelUrl": "" },
+      { "place": "Girgaon Chowpatty", "lat": 18.9522, "lng": 72.8196, "img": "nomad-bom-chowpatty-1", "reelUrl": "" },
+      { "place": "Mount Mary Church, Bandra", "lat": 19.0467, "lng": 72.8228, "img": "nomad-bom-mountmary-1", "reelUrl": "" },
+      { "place": "Mannat (Shah Rukh Khan House), Bandra", "lat": 19.05, "lng": 72.8203, "img": "nomad-bom-mannat-1", "reelUrl": "" },
+      { "place": "Mahalaxmi Temple", "lat": 19.0175, "lng": 72.8263, "img": "nomad-bom-mahalaxmi-1", "reelUrl": "" },
+      { "place": "Kala Ghoda", "lat": 18.93, "lng": 72.8326, "img": "nomad-bom-kalaghoda-1", "reelUrl": "" },
+      { "place": "Lalbaugcha Raja, Lalbaug", "lat": 18.9944, "lng": 72.8406, "img": "nomad-bom-lalbaug-1", "reelUrl": "" },
+      { "place": "Mumbai Coastal Road Undersea Tunnel", "lat": 18.965, "lng": 72.808, "img": "nomad-bom-tunnel-1", "reelUrl": "" },
+      { "place": "Worli Sea Face", "lat": 19.0025, "lng": 72.8156, "img": "nomad-bom-worli-1", "reelUrl": "" },
+      { "place": "Galaxy Apartments (Salman Khan House), Bandra", "lat": 19.063, "lng": 72.826, "img": "nomad-bom-galaxy-1", "reelUrl": "" },
+      { "place": "Hanging Gardens (Pherozeshah Mehta Gardens), Malabar Hill", "lat": 18.9525, "lng": 72.8075, "img": "nomad-bom-hanging-1", "reelUrl": "" }
+    ]
+  }
+]

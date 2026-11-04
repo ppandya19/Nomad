@@ -1,0 +1,256 @@
+{
+ "_note": "scratch cache of live Google ratings for scoring; safe to delete",
+ "_at": "2026-11-04T03:45:47.954Z",
+ "ratings": {
+  "New York::Times Square": {
+   "rating": 4.7,
+   "ratings_total": 249537,
+   "google_name": "Times Square"
+  },
+  "New York::Central Park": {
+   "rating": 4.8,
+   "ratings_total": 303628,
+   "google_name": "Central Park"
+  },
+  "New York::Empire State Building": {
+   "rating": 4.7,
+   "ratings_total": 131216,
+   "google_name": "Empire State Building"
+  },
+  "New York::Statue of Liberty": {
+   "rating": 4.7,
+   "ratings_total": 112918,
+   "google_name": "Statue of Liberty"
+  },
+  "New York::Brooklyn Bridge": {
+   "rating": 4.8,
+   "ratings_total": 94561,
+   "google_name": "Brooklyn Bridge"
+  },
+  "New York::Chelsea Market": {
+   "rating": 4.6,
+   "ratings_total": 52550,
+   "google_name": "Chelsea Market"
+  },
+  "New York::The High Line": {
+   "rating": 4.7,
+   "ratings_total": 68974,
+   "google_name": "The High Line"
+  },
+  "New York::Top of the Rock": {
+   "rating": 4.7,
+   "ratings_total": 93367,
+   "google_name": "Top of The Rock"
+  },
+  "New York::Metropolitan Museum of Art": {
+   "rating": 4.8,
+   "ratings_total": 95487,
+   "google_name": "The Metropolitan Museum of Art"
+  },
+  "New York::One World Trade Center": {
+   "rating": 4.8,
+   "ratings_total": 31437,
+   "google_name": "One World Trade Center"
+  },
+  "Chicago::Cloud Gate": {
+   "rating": 4.7,
+   "ratings_total": 42270,
+   "google_name": "Cloud Gate"
+  },
+  "Chicago::Willis Tower": {
+   "rating": 4.5,
+   "ratings_total": 24605,
+   "google_name": "Willis Tower"
+  },
+  "Chicago::Navy Pier": {
+   "rating": 4.6,
+   "ratings_total": 89533,
+   "google_name": "Navy Pier"
+  },
+  "Chicago::Art Institute of Chicago": {
+   "rating": 4.8,
+   "ratings_total": 38822,
+   "google_name": "The Art Institute of Chicago"
+  },
+  "Chicago::Wrigley Field": {
+   "rating": 4.8,
+   "ratings_total": 37036,
+   "google_name": "Wrigley Field"
+  },
+  "Chicago::Chicago Riverwalk": {
+   "rating": 4.8,
+   "ratings_total": 114,
+   "google_name": "Chicago Riverwalk"
+  },
+  "Chicago::Millennium Park": {
+   "rating": 4.8,
+   "ratings_total": 94499,
+   "google_name": "Millennium Park"
+  },
+  "Miami::Ocean Drive": {
+   "rating": 4.7,
+   "ratings_total": 2018,
+   "google_name": "Ocean Drive"
+  },
+  "Miami::Wynwood Walls": {
+   "rating": 4.7,
+   "ratings_total": 49786,
+   "google_name": "Wynwood Walls"
+  },
+  "Miami::Vizcaya Museum": {
+   "rating": 4.7,
+   "ratings_total": 16504,
+   "google_name": "Vizcaya Museum & Gardens"
+  },
+  "Miami::Bayside Marketplace": {
+   "rating": 4.5,
+   "ratings_total": 80496,
+   "google_name": "Bayside Marketplace"
+  },
+  "Miami::Art Deco District": {
+   "rating": 4.6,
+   "ratings_total": 154,
+   "google_name": "Miami Art Deco District and Ocean Drive"
+  },
+  "Miami::Bayfront Park": {
+   "rating": 4.7,
+   "ratings_total": 21886,
+   "google_name": "Bayfront Park"
+  },
+  "Chicago::Field Museum": {
+   "rating": 4.7,
+   "ratings_total": 32306,
+   "google_name": "Field Museum"
+  },
+  "Chicago::Shedd Aquarium": {
+   "rating": 4.5,
+   "ratings_total": 34109,
+   "google_name": "Shedd Aquarium"
+  },
+  "Chicago::Chicago Theatre": {
+   "rating": 4.7,
+   "ratings_total": 10971,
+   "google_name": "The Chicago Theatre"
+  },
+  "Chicago::Lincoln Park Zoo": {
+   "rating": 4.6,
+   "ratings_total": 39728,
+   "google_name": "Lincoln Park Zoo"
+  },
+  "Chicago::360 Chicago": {
+   "rating": 4.5,
+   "ratings_total": 21525,
+   "google_name": "360 CHICAGO"
+  },
+  "Chicago::Adler Planetarium": {
+   "rating": 4.2,
+   "ratings_total": 3287,
+   "google_name": "Adler Planetarium"
+  },
+  "Chicago::Griffin Museum of Science and Industry": {
+   "rating": 4.7,
+   "ratings_total": 36277,
+   "google_name": "Griffin Museum of Science and Industry"
+  },
+  "Chicago::Garfield Park Conservatory": {
+   "rating": 4.8,
+   "ratings_total": 10715,
+   "google_name": "Garfield Park Conservatory"
+  },
+  "Italy::Colosseum": {
+   "rating": 4.8,
+   "ratings_total": 511047,
+   "google_name": "Colosseum"
+  },
+  "Italy::Trevi Fountain": {
+   "rating": 4.7,
+   "ratings_total": 529918,
+   "google_name": "Trevi Fountain"
+  },
+  "Italy::Spanish Steps": {
+   "rating": 4.6,
+   "ratings_total": 114952,
+   "google_name": "Spanish Steps"
+  },
+  "Italy::Sistine Chapel": {
+   "rating": 4.7,
+   "ratings_total": 98629,
+   "google_name": "Sistine Chapel"
+  },
+  "Italy::Vatican Museums": {
+   "rating": 4.6,
+   "ratings_total": 213264,
+   "google_name": "Vatican Museums"
+  },
+  "Italy::Pantheon": {
+   "rating": 4.8,
+   "ratings_total": 291193,
+   "google_name": "Pantheon"
+  },
+  "Italy::Roman Forum": {
+   "rating": 4.8,
+   "ratings_total": 147349,
+   "google_name": "Roman Forum"
+  },
+  "Italy::Piazzale Michelangelo": {
+   "rating": 4.8,
+   "ratings_total": 115236,
+   "google_name": "Piazzale Michelangelo"
+  },
+  "Italy::Ponte Vecchio": {
+   "rating": 4.7,
+   "ratings_total": 155455,
+   "google_name": "Ponte Vecchio"
+  },
+  "Italy::Doge's Palace": {
+   "rating": 4.7,
+   "ratings_total": 40741,
+   "google_name": "Doge's Palace"
+  },
+  "Italy::Grand Canal": {
+   "rating": 4.8,
+   "ratings_total": 3052,
+   "google_name": "Grand Canal"
+  },
+  "Mumbai::Gateway of India": {
+   "rating": 4.6,
+   "ratings_total": 389850,
+   "google_name": "Gateway Of India Mumbai"
+  },
+  "Mumbai::Chhatrapati Shivaji Maharaj Terminus": {
+   "rating": 4.5,
+   "ratings_total": 96407,
+   "google_name": "Chhatrapati Shivaji Maharaj Terminus"
+  },
+  "Mumbai::Shree Siddhivinayak Temple": {
+   "rating": 4.8,
+   "ratings_total": 137569,
+   "google_name": "Shree Siddhivinayak Temple"
+  },
+  "Mumbai::Girgaon Chowpatty": {
+   "rating": 4.3,
+   "ratings_total": 5928,
+   "google_name": "Girgaon Chowpatty"
+  },
+  "Mumbai::Mannat (Shah Rukh Khan House), Bandra": {
+   "rating": 4.4,
+   "ratings_total": 107,
+   "google_name": "Mannat"
+  },
+  "Mumbai::Lalbaugcha Raja, Lalbaug": {
+   "rating": 4.6,
+   "ratings_total": 642,
+   "google_name": "LALBAUGCHA RAJA"
+  },
+  "Mumbai::Galaxy Apartments (Salman Khan House), Bandra": {
+   "rating": 4.3,
+   "ratings_total": 381,
+   "google_name": "Galaxy Apartment"
+  },
+  "Mumbai::Hanging Gardens (Pherozeshah Mehta Gardens), Malabar Hill": {
+   "rating": 4.2,
+   "ratings_total": 38022,
+   "google_name": "Hanging Garden"
+  }
+ }
+}

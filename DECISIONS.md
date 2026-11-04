@@ -1,0 +1,75 @@
+﻿# DECISIONS.md
+- [Day1] NYC is default city, not Lisbon. Why: demo audience is NYC.
+- [Day1] No map library, plain JS script tag. Why: 1 file, no deps.
+- [Day1] Keys via /api/* only. Why: no leak.
+- [Day1] Prototype runs keyless with fallbacks, Google stays provider. Why: demo full flow now, real keys light it up later with no code change. Search falls back locally on any Google error (billing off, denied).
+- [Day1] Travel times are deterministic placeholders (5-35 min). Why: demo without Directions API/billing; replace with real durations later.
+- [Day1] Reels render Instagram embeds when a permalink is set, else colored tiles. Why: real reels need curated public URLs, no API key path.
+- [Day1] Each reel header shows prominent views; replay is native (click video). Why: matches Instagram feel; no custom button needed.
+- [Day1] City picker with static coords + per-city trips (nomad-trip-{nyc,chi,mia}). Why: billing-free city switching; NYC keeps existing saved trip.
+- [Day1] Search is city-aware (city param; local filters, Google appends city). Why: each city demo finds its own spots.
+- [Day1] Durations via /api/directions (one request, waypoints); null falls back to ~estimates. Why: live times with billing, ~ marks estimates without.
+- [Day1] Multi-day shell: overview with highlight pics + blurbs, day view with toggle; trips stored per city per day (old arrays migrate to day 1). Why: IG-flow foundation; pics are picsum stand-ins until Place Photos.
+- [Day1] IG theme replaces poster inks: gradient band, IG blue actions, system type, view transitions. Why: look native to Instagram per brief.
+- [Day1] Collections start flow from data/collections.json; Plan trip appends new places to the city's active day. Why: saved-reels entry per mockup.
+- [Day1] Food picks matched to persona tags with % score; stub ratings unlabeled, live Google ratings pass through search. Why: persona recs per mockup without fabricating Google data.
+- [Day1] Collections: searchable list with inline Plan per row; detail offers Plan with reels (selected → active day) or Auto create (round-robin across days). Why: explicit user flow.
+- [Day1] Optimize route is free: exact TSP ≤8 stops, 2-opt beyond, first stop fixed. Why: beats Wanderlog's paywalled optimizer; Route Optimization API is fleet overkill.
+- [Day1] Reelmap Score = quality 40 + buzz 30 + vibe 20 + trust 10 with documented neutral fallbacks. Why: signature ranking; compare sheet per mockup p4.
+- [Day1] Stop detail with Reels/Reviews tabs; /api/reviews serves Places Details or null-stub. Why: mockup p2; lights up with billing.
+- [Day1] WhatsApp share via wa.me deep link on overview; auto-create snake-deals score-ranked posts. Why: viral loop per mockup; scores beat round-robin.
+- [Next] Pitch: use saved Instagram collections from one's profile, or let app create one. Why: next-phase direction for reels sourcing.
+- [Day1] .env.local shipped with TEST_KEY placeholders; Google rejects them with InvalidKeyMapError. Why: bad keys fail at Google, not in app code — verify key validity before debugging UI.
+- [Day1] Restrict-key dropdown only lists enabled APIs. Why: enable Maps JavaScript API + Places API in Library before restricting keys to them.
+- [Day1] Billing deferred until end-to-end demo; demo-scale cost ~$0 under $200/mo credit. Why: unblock build; local fallbacks cover billing-off.
+- [Day1] Ruled out Meta Maps (no public web embed API); kept Google over OSM/Leaflet. Why: user call — Google stays provider.
+- [Day1] data/*.json must be BOM-free. Why: BOM breaks JSON.parse and Next JSON imports (caused the "json invalid" error).
+- [Day1] Reels point to Instagram, not TikTok. Why: user call.
+- [Day1] List reorder is pointer-based from the grip handle, mouse + touch. Why: one path for all inputs; row body still scrolls on touch.
+- [Day1] Reels panel shows top 5 per stop by parsed views (M/K). Why: rank real content as lists grow.
+- [Day1] Layout is 430px mobile column, 2xl on desktop, taller map on md+. Why: PC looked tiny; breakpoints serve both.
+- [Day1] Dev server must start from project root; restart after .env.local edits. Why: env loads at startup; wrong cwd reads as missing keys.
+- [Day2] Product split into trip view (per-collection: days with covers + blurbs, WhatsApp share) and day view (map + stops). Why: user call; both plan paths land on the trip first, tapping a day steps in.
+- [Day2] Planned day(s) mirror checked posts: deselected collection stops are removed, hand-added stops kept (lib/plan.js). Why: selection must exclude; covered by node --test regression tests, no framework.
+- [Day2] One place once per trip: dedupeTrip collapses repeats on load, plan paths skip places in other days. Why: repeated plans stacked dupes and identical covers.
+- [Day2] Day covers from Wikimedia Commons (top stop + city, photos only), pinned covers[] per collection (URL or place), picsum fallback. Why: real landmark photos with no key; pinned Day 1 keeps the exact Times Square shot.
+- [Day2] Collection view shows the same reels rail as day view for checked posts; embed script loads for both. Why: demo consistency.
+- [Day2] Day-view Reels lists every stop with its stop-list number, placeholder when a stop has no reels. Why: stops and reels stay in sync through add/remove/reorder.
+- [Day2] Timetable removed; transit total lives in the stops header, map directly below stops. Why: redundant section; map updates visible next to edits.
+- [Day2] Food is one horizontal row of compact cards with a + add button each. Why: killed whitespace; add-to-stops stays one tap.
+- [Day2] Critical button colors set inline (gradient/blue), not via stylesheet classes. Why: stale cached CSS rendered white-on-white invisible buttons.
+- [Day2] Embeds get a second settle pass ~2.5s after load. Why: repairs IG header misrenders from transient avatar/CDN failures.
+- [Day2] Package is ESM with `npm test` (node --test). Why: zero-dependency maintained tests for plan logic.
+- [Day2] Synthetic stop ids resolve to live Google places by name+city for ratings (rows, pins, reviews, food). Why: collection/food stops have no Google id; top-hit match with a same-name guard.
+- [Day2] Legs show drive/transit/walk minutes from 3 parallel Directions calls; offline scales walk/transit off the drive estimate with ~. Why: traveler asked for mode context; totals stay drive-based.
+- [Day2] Trip chat via Meta Model API (muse-spark-1.3) through /api/chat proxy with streamed replies; key server-side only. Why: OpenAI-compatible, trip context injected per request; phase 1 is read-only advice, no agentic edits.
+- [Day2] Never rewrite data/*.json via PowerShell Set-Content (writes BOM, breaks Turbopack JSON with "no exports"). Why: edit tools stay BOM-free; byte-check first 3 bytes when touching JSON from shell.
+- [Day2] Places calls use Places API (New) (searchText POST + details GET with field masks). Why: legacy Places API can't be enabled on new projects since Oct 2026; client shapes unchanged.
+- [Day3] Day-count changes and both plan actions spread stops city-aware (clusterByCity 40km + spreadAcrossDays + mergeSpread, lib/plan.js). Why: Italy stacked 15 stops in one day; countries now get one city per day, single cities split evenly, mixing only when cities outnumber days; hand-placed stops never move on re-plan.
+- [Day3] IG playability can't be probed server-side (logged-out shell identical for good/walled reels), so unrendered embeds swap to tiles per-reel in the browser after settle. Why: kills "Play on Instagram"/black-screen boxes for any walled reel without knowing which; playable:false kill-switch kept for known-bad.
+- [Day3] Move-to-day clears live legs so they refetch for the new stop list. Why: stale leg array had the wrong length after a move.
+- [Day3] Directions migrated to Routes API (computeRoutes, DRIVE/TRANSIT/WALK) with per-mode fill and a live flag. Why: legacy Directions is blocked on new projects, so every leg silently showed arbitrary 5–35 min hash values; needs Routes API enabled in console.
+- [Day3] Offline leg fallback is distance-based (fallbackDriveMin: 28 km/h city, 85 km/h intercity, 3 min floor). Why: hash times showed e.g. ~12 min Rome→Florence; estimates now scale with real distance and carry the ~ prefix.
+- [Day3] Collection-post thumbnails generated with Muse Image (scripts/gen-thumbs.mjs → public/thumbs/<coll>-<idx>.jpg), UI tries local first then picsum. Why: picsum seeds showed beaches/deer for Times Square; ~$0.01/image, rerunnable, skips existing.
+- [Day3] Chat recommends beyond the itinerary (top-rated city restaurants injected via restaurantContext, famous spots from model knowledge). Why: trip-only prompt refused "pizza near Chelsea Market"; ratings/hours still grounded in context only, phase 1 stays read-only.
+- [Day3] Offline search unions places.json with restaurants.json (name/cuisine match, local-food- ids). Why: live Places New already searches any place city-wide; fallback was collection-spots-only when the key/routes were down.
+- [Day3] Add-food row excludes stops already in the day (notInStops, lib/plan.js) and backfills from the ranked list; empty state when all are added. Why: added picks lingered in suggestions; removal re-eligible automatically since the list derives from stops.
+- [Day3] Add-food tops up to 4 with live nearby restaurants (/api/nearby searchNearby 2km, fillPicks merge, static first). Why: NYC has 3 static picks so the row shrank to 1 after adds; live fills carry real Google ratings and addresses.
+- [Day3] Add-stay section mirrors food (data/stays.json 4/city, stay- ids, live rating resolution, pin subline, Stay pill). Why: stays addable to stops like food; synthetic-id plumbing reused so rows/pins/reviews resolve the same way.
+- [Day3] Day covers generate on demand via /api/cover (Muse Image 3:2, cached by city+place slug under public/covers). Why: bulk pre-generation was rejected; rows now resolve covers from live day content so add/remove re-covers automatically; pinned URL still wins, Wikimedia/picsum remain fallbacks.
+- [Day3] Times Square lead reel un-kill-switched per traveler (it plays); playable flags now follow user reports, not server fetches. Why: logged-out IG shells are identical, so the earlier flag was a false positive; per-reel browser swap stays the safety net.
+- [Day3] Embed CSS contains unprocessed boxes (centered fallback, no overlap) and hides the fallback link once the iframe renders; embed effect re-processes at ~6s with a final failed-swap at 12s and covers stop-detail tabs. Why: stragglers showed raw "View this post" text overlapping neighbors.
+- [Day4] First-time guide is 6 step-cards (collections → plan → days → day sections → stops/stays → ask/share) after the language gate, seen-flagged in localStorage, reopenable via a top-bar ? button. Why: user picked cards over coach-marks (fragile across view switches) and wanted a reopen path; all copy localized in the 6 test languages.
+- [Day4] Guide/lang mount state uses SSR-identical defaults (guide closed) with a pre-paint layout-effect sync. Why: localStorage initializers caused hydration mismatches once a language was stored.
+- [Day4] No local binding in app/components may be named `t` where the i18n translator is imported (guarded by test). Why: overview `const t` and stop-tab `.map(t=>` shadowed the import and crashed both views with "t is not a function".
+- [Day4] Per-view page hints: pulsing numbered dots at anchors + one panel slot per view, Back/Next/Got-it, per-view dismissal persisted, ? opens a menu (How-it-works / Replay hints). Why: user mock (textinfo.png) asked for numbered per-option descriptions guiding the next step on every page; in-flow dots avoid overlay-measurement fragility; all copy in the 6 test languages.
+- [Day4] Hint text moved from the top panel into popovers anchored at each number (above/below + left/right per anchor, day pills/nav dots floated outside their scroll rows). Why: user asked for text right where the numbers are; Next/Back now scrolls to the next dot so the walk physically moves through the page.
+- [Day4] Open hint spotlights its section: translucent dim over the page (box-shadow cutout) + white ring that glides between targets, re-measured on scroll/resize. Why: user asked for background dim with only the guided section highlighted while stepping; ring/dot/popover sit above the dim, inactive dots dim but stay tappable.
+- [Day4] Hint refinements: popover gets a deep shadow + white halo so it reads above the dim; corner dots dropped their z-10 so only the active number stays lit; Next scrolls only when dot+popover aren't fully visible (centered); ? menu moved to a top sheet with two explicit buttons. Why: user review pass on the tour visuals.
+- [Day4] Sticky bars sit at z-20 above the hint dim; dot wrappers never use transforms for centering (flex instead). Why: screenshot showed the Plan popover veiled — sticky positioning and translate both trap descendants in a stacking context below the dim, so the popover's own z-index couldn't save it.
+- [Day4] Open hint is modal: transparent tap-catcher over the page, sticky bars pointer-dead except dots, chat parked while touring; inactive dots fade via their own opacity (not the veil). Why: user asked for background actions inactivated with popover buttons supreme (chat bubble had been swallowing Next taps); screenshot showed sticky-header dots staying lit, which veil-dimming can never fix.
+- [Day4] Tour paint order is number > popover > active-area ring (dot button z-1 over its card, ring at z-25 under the dots layer, above sticky bars/dim). Why: user-specified layering; ring used to sit above the card and cross over it.
+- [Day4] Assistant edits stops via native tool calls (add_stop/remove_stop): model proposes, client resolves names (live search or offline list), traveler confirms in a chat card, Page applies. Why: read-only chat couldn't act; always-confirm + fuzzy match with pick-one keeps demo trust; ack is client-side (no second model round-trip).
+- [Day4] Food cats are local special/coffee/lunch/dinner/fine dine, with lunch/dinner matching the meal across cuisines (Mexican spots flow in by meal; fine-dine dinners show under dinner too). Why: user replaced the mexican tab; meal predicates keep every tab at 3+ offline with zero new curation.
+- [Day4] Food picks drop located spots over 10 km from every stop; unlocated spots survive with city-wide labels and no walk claim; live top-up triggers on the filtered count and is capped the same. Why: Italy days showed Florence picks on Rome days (~2000 min walk); bias alone doesn't bound live results.
+- [Day4] Legs carry per-mode live flags (Routes fill, estimates fill the rest) with departureTime on transit; trip-derived sig refetches all days' legs with a shared cache, totals use live drive. Why: train times (esp. Mumbai) read as wrong static guesses; per-mode ~ is honest, and overview totals used to ignore every day's live legs.
