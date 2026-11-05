@@ -120,7 +120,7 @@ describe('guide', ()=>{
 
 describe('hints', ()=>{
   it('resolves every page hint in every locale', ()=>{
-    assert.deepEqual(Object.keys(HINT_KEYS).sort(), ['collection', 'collections', 'day', 'overview', 'stays', 'stop']);
+    assert.deepEqual(Object.keys(HINT_KEYS).sort(), ['collection', 'collections', 'day', 'overview', 'stays', 'stop', 'tips']);
     for(const [view, pairs] of Object.entries(HINT_KEYS)){
       assert.ok(pairs.length >= 2, `${view} has hints`);
       for(const [tk, dk] of pairs){

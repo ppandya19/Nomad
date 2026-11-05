@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Nomad — Plan the day",
   description: "Pick a city, plan stops, watch reels. A day trip in one flow.",
+  icons: { icon: "/nomad-logo.svg" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

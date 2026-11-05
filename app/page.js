@@ -3,10 +3,12 @@ import { useState, useEffect, useLayoutEffect, useRef, Fragment, useMemo } from 
 import Image from 'next/image';
 import MapView from '../components/MapView';
 import ChatWidget from '../components/ChatPanel';
+import NomadLogo from '../components/NomadLogo';
 import reels from '../data/reels.json';
 import collections from '../data/collections.json';
 import restaurants from '../data/restaurants.json';
 import stays from '../data/stays.json';
+import rentals from '../data/rentals.json';
 import { optimizeOrder, routeKm, estimateModes, formatLeg, fallbackDriveMin } from '../lib/route';
 import { dedupeTrip, stripCollection, resizeDays, spreadAcrossDays, mergeSpread, notInStops, fillPicks, moveStop as moveStopToDay } from '../lib/plan';
 import { resolvePlace, isSyntheticId } from '../lib/places';
@@ -15,8 +17,8 @@ import { dayHighlight, tripHeadline, tripHighlights, shareTripText } from '../li
 import { foodPicksFor, inFoodCat, FOOD_MAX_KM } from '../lib/food';
 import { stopReserveTag, foodReserveTag, reserveLabel } from '../lib/reserve';
 import { matchStops, withRatings } from '../lib/chat-edit';
-import { LOCALES, t, daysUnit, dayName, stopsUnit, clipsUnit, postsUnit, footDays, foodCatLabel, mealLabel, stopOfLine, totalDriveLine, nearStopLine, inCityLine, storedLang, GUIDE_STEP_KEYS, guideSeen, HINT_KEYS, hintDoneViews } from '../lib/i18n';
-import places from '../data/places.json';
+import { LOCALES, t, daysUnit, dayName, stopsUnit, clipsUnit, postsUnit, footDays, foodCatLabel, mealLabel, stopOfLine, totalDriveLine, nearStopLine, inCityLine, storedLang, GUIDE_STEP_KEYS, guideSeen, HINT_KEYS, hintDoneViews, CITY_SLUG } from '../lib/i18n';
+import { pdfFailureDetail } from '../lib/pdf-text';
 
 const DEFAULT_STOPS = [
   { place_id:'chelsea', name:'Chelsea Market', address:'75 9th Ave', lat:40.7424, lng:-74.0061 },
@@ -24,7 +26,6 @@ const DEFAULT_STOPS = [
   { place_id:'toprock', name:'Top of the Rock', address:'30 Rockefeller', lat:40.7587, lng:-73.9787 }
 ];
 
-const CITY_SLUG = { 'New York':'nyc', 'Chicago':'chi', 'Miami':'mia', 'Italy':'ita', 'Mumbai':'bom' };
 const CITY_CENTER = {
   'New York': { lat: 40.7128, lng: -74.006 },
   'Chicago': { lat: 41.8781, lng: -87.6298 },
@@ -148,7 +149,7 @@ function StopRating({ stop, city, views, lang='en' }){
   const total = stop.ratings_total ?? res?.ratings_total;
   if(rating==null) return null;
   const tag = stopReserveTag({ name: stop.name, ratings_total: total, views });
-  return (<Fragment><span className="font-bold">{rating}</span><span className="opacity-60">{total!=null ? ` · ${fmtCount(total)} Google reviews` : ' Google'}{tag ? ` · ${reserveLabel(tag, lang)}` : ''} · </span></Fragment>);
+  return (<Fragment><span className="font-bold">{rating}</span><span className="opacity-60">{total!=null ? ` · ${fmtCount(total)} Google reviews` : ' Google'}{tag ? ` · ${reserveLabel(tag, lang)}` : ''}</span></Fragment>);
 }
 
 export default function Page(){
@@ -187,6 +188,7 @@ export default function Page(){
   const [guideStep,setGuideStep] = useState(0);
   const [hintsDone,setHintsDone] = useState({});
   const [hintOpen,setHintOpen] = useState(null);
+  const [skipAsk,setSkipAsk] = useState(null);
   const [helpMenu,setHelpMenu] = useState(false);
   const [spotRect,setSpotRect] = useState(null);
   useIsoLayoutEffect(()=>{
@@ -437,8 +439,10 @@ export default function Page(){
 
   const legMinutes = (a,b)=>fallbackDriveMin(a,b);
 
-  const [compareId,setCompareId] = useState(null);
   const [moveId,setMoveId] = useState(null);
+  const [pdfBusy,setPdfBusy] = useState(false);
+  const [pdfFail,setPdfFail] = useState(false);
+  const [pdfDetail,setPdfDetail] = useState('');
   const sendToDay = (i, day)=>{
     const o = readTrip(city);
     o.days[activeDay] = [...stops];
@@ -446,14 +450,6 @@ export default function Page(){
     try{ localStorage.setItem(tripKey(city), JSON.stringify({ days: next, active: activeDay })); }catch{}
     setStops(next[activeDay] || []);
     setMoveId(null);
-  };
-  const compareAlts = ()=>{
-    const have = new Set(stops.map(x=>x.name));
-    return places
-      .filter(p=>p.city===city && !have.has(p.name))
-      .map(p=>({ ...p, score: reelmapScore({ name:p.name }, { reels, persona }).total }))
-      .sort((a,b)=>b.score-a.score)
-      .slice(0,3);
   };
 
   const [embedState,setEmbedState] = useState('loading');
@@ -574,10 +570,12 @@ export default function Page(){
   const reelCount = reelStops.reduce((sum,s)=>sum+Math.min(reels[s.name].length,5),0);
   const tripDays = readTrip(city).days;
   const shareDays = tripDays.map((d,i)=> i===activeDay ? stops : d);
-  const waLink = `https://wa.me/?text=${encodeURIComponent(shareTripText({ city, days:shareDays, reels, persona, lang }))}`;
+  const tripStops = shareDays.flat();
 
   const dayDrive = (d,i)=>{ const L = dayLegs[i]?.legs; if(L && L.length===d.length-1) return L.reduce((sum,leg)=>sum+(leg.drive||0),0); let total = 0; for(let k=0;k<d.length-1;k++) total += legMinutes(d[k], d[k+1]); return total; };
   const dayBlurb = (d,i)=>dayHighlight(d, { dayNum:i+1, driveMin:dayDrive(d,i), reels, persona, lang });
+  const waLink = `https://wa.me/?text=${encodeURIComponent(shareTripText({ city, days:shareDays, reels, persona, lang,
+    restaurants:restaurants[city]||[], rentals:rentals[city]||[], dayMoveMin:shareDays.map((d,i)=>dayDrive(d,i)) }))}`;
 
   const foodContext = (f)=>{
     if(f.lat==null || f.lng==null || !stops.length) return inCityLine(city.toUpperCase(), lang);
@@ -596,27 +594,28 @@ export default function Page(){
     return ()=>{ live = false; };
   },[city]);
   const [liveCat,setLiveCat] = useState({ key:null, list:[] });
+  const staticFoodN = foodPicksFor(restaurants[city]||[], { category:foodCat, stops, exclude:tripStops, limit:99 }).length;
+  const foodCenter = stops[0] ?? CITY_CENTER[city];
+  const liveCatKey = `${city}::${foodCat}`;
+  const liveCatLoading = staticFoodN<3 && liveCat.key!==liveCatKey;
   useEffect(()=>{
-    const staticN = foodPicksFor(restaurants[city]||[], { category:foodCat, stops, limit:99 }).length;
-    const key = `${city}::${foodCat}`;
-    if(staticN>=3 || liveCat.key===key) return;
-    const c = stops[0] ?? CITY_CENTER[city];
+    if(staticFoodN>=3 || liveCat.key===liveCatKey) return;
     const timer = setTimeout(async ()=>{
       try{
-        const d = await fetch(`/api/food?cat=${encodeURIComponent(foodCat)}&city=${encodeURIComponent(city)}&lat=${c.lat}&lng=${c.lng}`).then(r=>r.json());
-        setLiveCat({ key, list:Array.isArray(d) ? d : [] });
-      }catch{ setLiveCat({ key, list:[] }); }
+        const d = await fetch(`/api/food?cat=${encodeURIComponent(foodCat)}&city=${encodeURIComponent(city)}&lat=${foodCenter.lat}&lng=${foodCenter.lng}`).then(r=>r.json());
+        setLiveCat({ key:liveCatKey, list:Array.isArray(d) ? d : [] });
+      }catch{ setLiveCat({ key:liveCatKey, list:[] }); }
     }, 600);
     return ()=>clearTimeout(timer);
-  },[city, foodCat, stops, liveCat]);
+  },[city, foodCat, staticFoodN, foodCenter, liveCat, liveCatKey]);
   const foodPicks = fillPicks(
-    foodPicksFor(restaurants[city]||[], { category: foodCat, stops, liveByName: foodLive.city===city ? foodLive.byName : {} }),
+    foodPicksFor(restaurants[city]||[], { category: foodCat, stops, exclude: tripStops, liveByName: foodLive.city===city ? foodLive.byName : {} }),
     (liveCat.key===`${city}::${foodCat}` ? liveCat.list : [])
       .filter(h=>!stops.length || stops.some(s=>s.lat!=null && s.lng!=null && h.lat!=null && h.lng!=null && km(h.lat,h.lng,s.lat,s.lng)<=FOOD_MAX_KM))
       .map(h=>({ ...h, meal:mealLabel('Nearby', lang), cuisine:t(lang, 'food.cuisine.live'),
       reviews: h.ratings_total!=null ? fmtCount(h.ratings_total) : h.reviews,
       reserve: foodReserveTag({ cat: foodCat, meal: foodCat==='dinner' ? 'dinner' : h.meal, reviews: h.ratings_total }), _live: true })),
-    stops, 4);
+    tripStops, 4);
   const [stayLive,setStayLive] = useState({ city:null, byName:{} });
   useEffect(()=>{
     let live = true;
@@ -664,6 +663,18 @@ export default function Page(){
     if(hintOpen && hintOpen.view===view) return hintOpen.pos;
     return hintsDone[view] ? -1 : 0;
   };
+  // Key of the currently open dot (pos indexes the filtered list); -1 when
+  // the tour is paused or done. Lets trapping containers rise only while
+  // their own dot is the active one.
+  const hintKAt = (view, list)=>{ const p = hintPosAt(view); return p>=0 && list[p] ? list[p].k : -1; };
+  // The assistant hint is always last and never filtered: while a tour is
+  // up the floating button stays hidden except on its own step, and
+  // non-interactive throughout (it floats above the dim layer).
+  const asstOpen = (view, list)=>hintPosAt(view)===list.length-1;
+  const asstWrapCls = (view, list)=>{
+    if(hintPosAt(view)<0) return '';
+    return asstOpen(view, list) ? 'pointer-events-none' : 'hidden';
+  };
   const scrollHintDot = (view, pos)=>{
     setTimeout(()=>{
       const el = document.getElementById(`hint-${view}-${pos}`);
@@ -679,6 +690,7 @@ export default function Page(){
     }, 60);
   };
   const openHint = (view, pos)=>{
+    setSkipAsk(null);
     setHintOpen(hintPosAt(view)===pos ? { view, pos:-1 } : { view, pos });
     scrollHintDot(view, pos);
   };
@@ -687,9 +699,19 @@ export default function Page(){
     setHintsDone(next);
     try{ localStorage.setItem('nomad-hintsdone', JSON.stringify(next)); }catch{}
     if(hintOpen && hintOpen.view===view) setHintOpen(null);
+    setSkipAsk(null);
+  };
+  const dismissAllHints = ()=>{
+    const next = { ...hintsDone };
+    for(const v of Object.keys(HINT_KEYS)) next[v] = true;
+    setHintsDone(next);
+    try{ localStorage.setItem('nomad-hintsdone', JSON.stringify(next)); }catch{}
+    setHintOpen(null);
+    setSkipAsk(null);
   };
   const replayHints = ()=>{
     try{ localStorage.removeItem('nomad-hintsdone'); }catch{}
+    setSkipAsk(null);
     setHintsDone({});
     setHintOpen({ view, pos: 0 });
     setHelpMenu(false);
@@ -700,7 +722,7 @@ export default function Page(){
       const n = collections.filter(c=>`${c.name} ${c.city}`.toLowerCase().includes(collQ.trim().toLowerCase())).length;
       return hintList(v, [true, n>0]);
     }
-    if(v==='day') return hintList(v, [true, true, true, true, stops.length>2]);
+    if(v==='day') return hintList(v, [true, true, true, true, stops.length>2, true]);
     return hintList(v);
   };
   // Spotlight geometry: re-measured every render plus on scroll/resize so the
@@ -748,8 +770,9 @@ export default function Page(){
     const last = pos>=list.length-1;
     const cur = list[pos];
     const dimmed = !open && hintPosAt(view)>=0;
+    const asking = open && skipAsk===`${view}:${pos}`;
     return (
-      <span className={`relative inline-flex shrink-0 pointer-events-auto z-30 ${dimmed?'opacity-40':''}`}>
+      <span className={`relative inline-flex shrink-0 pointer-events-auto ${open?'z-40':'z-30'}${dimmed?' opacity-40':''}`}>
         <button id={`hint-${view}-${pos}`} onClick={()=>openHint(view, pos)}
           aria-label={t(lang, 'guide.step', { n: pos+1, total: list.length })}
           className="hint-dot tnum"
@@ -766,13 +789,29 @@ export default function Page(){
             style={{width:280, maxWidth:'78vw', boxShadow:'0 24px 48px -12px rgba(0,0,0,0.45), 0 4px 12px rgba(0,0,0,0.2), 0 0 0 2px #fff',
               ...(opts.above ? { bottom:'calc(100% + 8px)' } : { top:'calc(100% + 8px)' }),
               ...(opts.align==='right' ? { right:0 } : { left:0 })}}>
+            {asking ? (
+              <Fragment>
+                <div className="font-bold text-sm">{t(lang, 'hint.skip.t')}</div>
+                <p className="text-[13px] mt-0.5 opacity-80 leading-snug">{t(lang, 'hint.skip.d')}</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <button onClick={()=>setSkipAsk(null)}
+                    className="h-8 px-3 border border-hairline bg-white rounded-lg text-xs font-semibold t-ink motion-safe:active:scale-[0.98]">{t(lang, 'hint.skip.continue')}</button>
+                  <button onClick={dismissAllHints}
+                    style={{background:'linear-gradient(45deg,#833ab4,#fd1d1d 55%,#fcb045)', color:'#fff'}}
+                    className="h-8 px-3 rounded-lg text-xs font-semibold t-ink motion-safe:active:scale-[0.98]">{t(lang, 'hint.skip.yes')}</button>
+                </div>
+              </Fragment>
+            ) : (
+              <Fragment>
             <div className="flex items-start gap-2">
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-sm">{t(lang, cur.tk)}</div>
                 <p className="text-[13px] mt-0.5 opacity-80 leading-snug">{t(lang, cur.dk)}</p>
               </div>
-              <button onClick={()=>setHintOpen({ view, pos:-1 })} aria-label={t(lang, 'chat.close')}
-                className="text-base leading-none opacity-50 px-1 shrink-0">×</button>
+              <button onClick={()=>setSkipAsk(`${view}:${pos}`)} aria-label={t(lang, 'hint.skip.t')}
+                className="p-1 shrink-0 opacity-50 t-ink motion-safe:active:scale-95">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" /></svg>
+              </button>
             </div>
             <div className="mt-2 flex items-center gap-2">
               <span className="font-mono text-[10px] tnum opacity-60 mr-auto">{t(lang, 'guide.step', { n: pos+1, total: list.length })}</span>
@@ -793,6 +832,8 @@ export default function Page(){
             {!last && (
               <button onClick={()=>dismissHints(view)} className="mt-1.5 text-[11px] text-igblue font-semibold">{t(lang, 'hint.gotit')}</button>
             )}
+              </Fragment>
+            )}
           </div>
         )}
       </span>
@@ -802,13 +843,16 @@ export default function Page(){
   const masthead = (sub)=>(
     <header className="bg-white border-b border-hairline">
       <div className={`${col} py-3 flex items-baseline justify-between gap-3`}>
-        <div className="font-bold text-xl tracking-tight">Nomad</div>
+        <div className="flex items-center gap-2">
+          <NomadLogo size={26} />
+          <div className="font-bold text-xl tracking-tight">Nomad</div>
+        </div>
         <div className="flex items-center gap-2">
           <div className="text-xs opacity-60">{sub}</div>
           <button onClick={()=>setHelpMenu(true)} aria-label={t(lang, 'guide.help')}
-            className="text-[11px] font-bold border border-hairline rounded-full w-6 h-6 grid place-items-center t-ink">?</button>
+            className="text-[11px] font-bold border border-hairline rounded-full px-2.5 h-6 t-ink whitespace-nowrap">{t(lang, 'guide.help')} ?</button>
           <button onClick={()=>setLangPicking(true)} aria-label="Language"
-            className="text-[11px] font-bold border border-hairline rounded-full px-2 py-0.5 t-ink">{(lang||'en').toUpperCase()}</button>
+            className="text-[11px] font-bold border border-hairline rounded-full px-2 py-0.5 t-ink flex items-center gap-1">{I(<Fragment><circle cx="8" cy="8" r="6" /><path d="M2 8h12" /><path d="M8 2C5.5 4.5 5.5 11.5 8 14" /><path d="M8 2c2.5 2.5 2.5 8.5 0 12" /></Fragment>)}{(lang||'en').toUpperCase()}</button>
         </div>
       </div>
       <div className="h-1 ig-gradient" />
@@ -848,7 +892,8 @@ export default function Page(){
       <div key="lang" className="min-h-screen bg-ground text-ink font-sans animate-view">
         {masthead(t(lang||'en', 'mast.saved'))}
         <main className={`${col} pb-4`}>
-          <h2 className="font-bold text-3xl tracking-tight mt-8">{t(lang||'en', 'gate.title')}</h2>
+          <div className="mt-8"><NomadLogo size={44} /></div>
+          <h2 className="font-bold text-3xl tracking-tight mt-4">{t(lang||'en', 'gate.title')}</h2>
           <p className="text-sm opacity-60 mt-1">{t(lang||'en', 'gate.sub')}</p>
           <div className="mt-4 flex flex-col gap-2">
             {LOCALES.map(l=>(
@@ -1005,7 +1050,7 @@ export default function Page(){
               ))}
             </section>
           )}
-          <div className={`sticky bottom-0 z-20 bg-ground pt-2 pb-4 mt-4 flex flex-col gap-2 ${hintPosAt('collection')>=0?'pointer-events-none':''}`}>
+          <div className={`sticky bottom-0 ${[2,3].includes(hintKAt('collection', collnList))?'z-40':'z-20'} bg-ground pt-2 pb-4 mt-4 flex flex-col gap-2${hintPosAt('collection')>=0?' pointer-events-none':''}`}>
             <div className="relative" id="hintsec-collection-2">
               <span className="absolute -top-2 right-3">{hintDot('collection', collnList, 2, { align:'right', above:true })}</span>
               <button onClick={()=>planFromCollection(c, selPosts)} disabled={picks.length===0}
@@ -1046,6 +1091,59 @@ export default function Page(){
     const driveTotal = tripDays.reduce((sum,d,i)=>sum+dayDrive(d,i),0);
     const tripTips = tripHighlights({ days:tripDays, reels, persona, legMin:legMinutes, lang });
     const ovList = hintList('overview');
+    const sharePdf = async ()=>{
+      if(pdfBusy) return;
+      setPdfBusy(true);
+      setPdfFail(false);
+      setPdfDetail('');
+      const saveFile = (blob, name)=>{
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+      };
+      let blob = null, file = null, payload = null;
+      try{
+        const legsFor = (di, d)=>{
+          const found = dayLegs[di] && dayLegs[di].legs;
+          if(!found || found.length!==d.length-1) return null;
+          return found.map((l)=>l ? ({ drive:l.drive, transit:l.transit, walk:l.walk, live:l.live ?? false }) : null);
+        };
+        payload = { title:tripName, sub:`${city} · ${daysUnit(dayCount, lang)}`,
+          headline:tripHeadline({ city, days:tripDays, driveMin:driveTotal, reels, persona, lang }),
+          lang, city, collId: coll ? coll.id : null,
+          days:tripDays.map((d,i)=>({ title:dayName(i+1, lang), blurb:dayBlurb(d,i),
+            stops:d.map((s)=>({ name:s.name, rating:s.rating ?? null, reviews:s.ratings_total ?? null,
+              address:s.address || '', lat:s.lat ?? null, lng:s.lng ?? null })),
+            legs:legsFor(i, d) })) };
+        const res = await fetch('/api/pdf', { method:'POST',
+          headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(payload) });
+        if(!res.ok) throw new Error(pdfFailureDetail(res.status, await res.text().catch(()=>'')));
+        blob = await res.blob();
+        file = new File([blob], `nomad-${CITY_SLUG[city] || 'trip'}.pdf`, { type:'application/pdf' });
+      }catch(e){
+        console.warn('[nomad] pdf share failed', e);
+        setPdfFail(true);
+        setPdfDetail(e && e.message ? e.message : '');
+        setPdfBusy(false);
+        return;
+      }
+      // Share phase: the PDF already exists, so a share-sheet failure falls
+      // back to a download instead of reporting the PDF as unmade.
+      try{
+        if(navigator.canShare && navigator.canShare({ files:[file] })){
+          await navigator.share({ files:[file], title:payload.title, text:payload.headline });
+        }else{
+          saveFile(blob, file.name);
+        }
+      }catch(e){
+        if(e && e.name!=='AbortError'){
+          console.warn('[nomad] pdf share sheet failed, downloading instead', e);
+          try{ saveFile(blob, file.name); }catch{ setPdfFail(true); }
+        }
+      }finally{ setPdfBusy(false); }
+    };
     return (
       <div key="overview" className="min-h-screen bg-ground text-ink font-sans animate-view">
         {masthead(`${tripName} · ${daysUnit(dayCount, lang)}`)}
@@ -1108,23 +1206,39 @@ export default function Page(){
           </section>
         </main>
 
-        <div className={`${col} mt-8 relative`} id="hintsec-overview-2">
-          <span className="absolute -top-2 right-2">{hintDot('overview', ovList, 2, { align:'right' })}</span>
-          <a href={waLink} target="_blank" rel="noreferrer"
-            style={{background:'linear-gradient(45deg,#833ab4,#fd1d1d 55%,#fcb045)', color:'#fff'}}
-            className="flex h-12 items-center justify-center rounded-lg font-semibold t-ink motion-safe:active:scale-[0.98]">
-            {t(lang, 'ov.share')}
-          </a>
+        <div className={`${col} mt-8 relative`}>
+          <div className="flex gap-2">
+            <div className="relative flex-1" id="hintsec-overview-2">
+              <span className="absolute -top-2 right-2">{hintDot('overview', ovList, 2, { align:'right' })}</span>
+              <a href={waLink} target="_blank" rel="noreferrer"
+                style={{background:'linear-gradient(45deg,#833ab4,#fd1d1d 55%,#fcb045)', color:'#fff'}}
+                className="flex h-12 items-center justify-center gap-2 rounded-lg font-semibold t-ink motion-safe:active:scale-[0.98]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg>
+                {t(lang, 'ov.share')}
+              </a>
+            </div>
+            <div className="relative" id="hintsec-overview-3">
+              <span className="absolute -top-2 right-2">{hintDot('overview', ovList, 3, { align:'right' })}</span>
+              <button onClick={sharePdf} disabled={pdfBusy}
+                className="flex h-12 px-5 items-center justify-center rounded-lg font-semibold border border-hairline bg-white t-ink motion-safe:active:scale-[0.98] disabled:opacity-60 whitespace-nowrap">
+                {pdfBusy ? t(lang, 'ov.pdfing') : t(lang, 'ov.pdf')}
+              </button>
+            </div>
+          </div>
+          {pdfFail && <p className="text-xs mt-2 font-semibold" style={{color:ACCENT.bg}}>{t(lang, 'ov.pdffail')}{pdfDetail ? ` (${pdfDetail})` : ''}</p>}
         </div>
 
         <footer className="mt-16 border-t border-hairline bg-white">
           <div className={`${col} py-4 font-mono text-[11px] tnum flex justify-between gap-3`}>
-            <span>NOMAD</span>
+            <span className="flex items-center gap-1.5"><NomadLogo size={14} />NOMAD</span>
             <span>{city.toUpperCase()} · {footDays(dayCount, lang)}</span>
           </div>
         </footer>
-        <div className={hintPosAt('overview')>=0?'hidden':''}>
+        <div className={asstWrapCls('overview', ovList)}>
           <ChatWidget trip={{ city, days: tripDays.map(d=>d.map(s=>({ name:s.name, rating:s.rating ?? null }))), food: foodPicks.map(f=>({ name:f.name })), persona }} lang={lang} onEditStart={resolveEdit} onEditApply={applyEdit} />
+        </div>
+        <div id="hintsec-overview-4" className={`fixed bottom-4 right-4 w-12 h-12 pointer-events-none ${asstOpen('overview', ovList)?'z-[60]':''}`}>
+          <span className="absolute -top-2 -right-2">{hintDot('overview', ovList, 4, { above:true, align:'right' })}</span>
         </div>
       </div>
     );
@@ -1201,14 +1315,8 @@ export default function Page(){
             className="mt-4 text-sm text-igblue font-semibold">‹ {dayName(activeDay+1, lang)}</button>
           <h2 className="font-bold text-3xl tracking-tight mt-2">{t(lang, 'day.addstay')}</h2>
           <p className="text-xs opacity-60 mt-1">{t(lang, 'stay.sub', { city })}</p>
-          <div className="mt-3 border border-hairline bg-white rounded-lg px-4 py-3" id="hintsec-stays-1">
-            <div className="flex items-center gap-2">
-              <div className="font-mono text-[11px] uppercase opacity-60">{t(lang, 'stay.tip')}</div>
-              {hintDot('stays', stayList, 1)}
-            </div>
-            <p className="text-xs mt-1 opacity-80">{t(lang, 'stay.tip1')}</p>
-            <p className="text-xs mt-1 opacity-80">{t(lang, 'stay.tip2')}</p>
-          </div>
+          <button onClick={()=>setView('tips')}
+            className="mt-2 text-sm text-igblue font-semibold opacity-80">{t(lang, 'stay.tipslink')}</button>
           <div className="mt-4">
             <div className="relative" id="hintsec-stays-0">
               <input value={stayQ} onChange={e=>onTypeStay(e.target.value)}
@@ -1230,10 +1338,10 @@ export default function Page(){
               </div>
             )}
           </div>
-          <div id="hintsec-stays-2">
+          <div id="hintsec-stays-1">
           <div className="flex items-center gap-2 mt-8">
             <h3 className="font-bold text-xl tracking-tight">{t(lang, 'stay.picks')}</h3>
-            {hintDot('stays', stayList, 2)}
+            {hintDot('stays', stayList, 1)}
           </div>
           {stayPicks.length ? (
           <div className="mt-3 flex flex-col gap-2">
@@ -1265,15 +1373,64 @@ export default function Page(){
     );
   }
 
-  const dayList = hintList('day', [true, true, true, true, stops.length>2]);
+  if(view==='tips'){
+    const tipsList = hintList('tips');
+    const slug = CITY_SLUG[city]||'nyc';
+    const tipHead = (tk, icon, dot)=>(
+      <div className="flex items-center gap-2">
+        <span className="inline-flex shrink-0" style={{color:ACCENT.bg}}>{icon}</span>
+        <div className="font-mono text-[11px] uppercase font-semibold" style={{color:ACCENT.bg}}>{t(lang, tk)}</div>
+        {dot}
+      </div>
+    );
+    const prep = [
+      ['tips.flight.t', ['tips.flight.1', 'tips.flight.2'], I(<Fragment><path d="M14.5 1.5L7 8.5" /><path d="M14.5 1.5L10 14.5 7 8.5 1.5 6z" /></Fragment>)],
+      ['tips.car.t', ['tips.car.1', 'tips.car.2'], I(<Fragment><path d="M2.5 10.5l1.2-3.8a1 1 0 01.9-.7h6.8a1 1 0 01.9.7l1.2 3.8" /><path d="M2.5 10.5h11V13h-11z" /><circle cx="5.5" cy="13.5" r="1.3" /><circle cx="10.5" cy="13.5" r="1.3" /></Fragment>)],
+      ['tips.pack.t', ['tips.pack.1', 'tips.pack.2'], I(<Fragment><rect x="3" y="5" width="10" height="8.5" rx="1.5" /><path d="M6 5V3.8A.8.8 0 016.8 3h2.4a.8.8 0 01.8.8V5" /><path d="M3 9h10" /></Fragment>)],
+      ['tips.stay.t', ['tips.stay.1', 'tips.stay.2'], I(<Fragment><path d="M2 13V5" /><path d="M2 10.5h12V13" /><path d="M6 10.5V8h6v2.5" /></Fragment>)],
+    ];
+    return (
+      <div key="tips" className="min-h-screen bg-ground text-ink font-sans animate-view">
+        {masthead(`${city} · ${dayName(activeDay+1, lang)}`)}
+        <main className={`${col} pb-4`}>
+          <button onClick={()=>setView('day')}
+            className="mt-4 text-sm text-igblue font-semibold">‹ {dayName(activeDay+1, lang)}</button>
+          <h2 className="font-bold text-3xl tracking-tight mt-2">{t(lang, 'tips.title')}</h2>
+          <p className="text-xs opacity-60 mt-1">{t(lang, 'tips.sub', { city })}</p>
+          <div className="mt-3 border border-hairline bg-white rounded-lg px-4 py-3" id="hintsec-tips-0">
+            {tipHead('tips.around.t', I(<Fragment><circle cx="4" cy="4" r="2" /><circle cx="12" cy="12" r="2" /><path d="M5.4 5.4l5.2 5.2" /></Fragment>), hintDot('tips', tipsList, 0))}
+            <p className="text-xs mt-1 opacity-80">• {t(lang, `tips.around.${slug}`)}</p>
+            <p className="text-xs mt-1 opacity-80">• {t(lang, 'tips.around.offline')}</p>
+          </div>
+          <div id="hintsec-tips-1">
+          {prep.map(([tk, lines, icon], i)=>(
+            <div key={tk} className="mt-3 border border-hairline bg-white rounded-lg px-4 py-3">
+              {tipHead(tk, icon, i===0 && hintDot('tips', tipsList, 1))}
+              {lines.map(k=>(<p key={k} className="text-xs mt-1 opacity-80">• {t(lang, k)}</p>))}
+              {tk==='tips.car.t' && (rentals[city]||[]).length>0 && (
+                <p className="text-xs mt-1 opacity-80">• {t(lang, 'tips.car.book')}{' '}
+                  {(rentals[city]||[]).map((a,i)=>(
+                    <Fragment key={a.name}>{i>0 && ' · '}<a href={a.url} target="_blank" rel="noreferrer" className="text-igblue font-semibold">{a.name}</a></Fragment>
+                  ))}
+                </p>
+              )}
+            </div>
+          ))}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const dayList = hintList('day', [true, true, true, true, stops.length>2, true]);
 
   return (
     <div key={`day-${activeDay}`} className="min-h-screen bg-ground text-ink font-sans animate-view">
       {masthead(`${city} · ${dayName(activeDay+1, lang)}`)}
 
-      <div className={`sticky top-0 z-20 ${hintPosAt('day')>=0?'pointer-events-none':''}`}>
+      <div className={`sticky top-0 ${[0,1].includes(hintKAt('day', dayList))?'z-40':'z-20'}${hintPosAt('day')>=0?' pointer-events-none':''}`}>
       <div className="border-b border-hairline bg-white relative" id="hintsec-day-0">
-        <div className={`${col} flex items-center gap-1 py-2 overflow-x-auto rail-scroll`}>
+        <div className={`${col} flex items-center gap-1 py-2 overflow-x-auto rail-scroll no-scrollbar ${hintPosAt('day')>=0?'pr-9':''}`}>
           <button onClick={()=>setView('overview')}
             className="text-sm text-igblue font-semibold mr-2 shrink-0">{t(lang, 'day.alldays')}</button>
           {tripDays.map((_,i)=>(
@@ -1283,13 +1440,15 @@ export default function Page(){
                 ? {backgroundColor:ACCENT.bg, color:ACCENT.fg}
                 : {backgroundColor:'transparent', color:'var(--color-ink)', border:'1px solid var(--color-hairline)'}}>{i+1}</button>
           ))}
+          <button onClick={()=>setView('tips')}
+            className="h-8 px-3 rounded-full border border-hairline bg-white text-xs font-semibold shrink-0 ml-auto t-ink motion-safe:active:scale-95 flex items-center gap-1.5">{I(<Fragment><circle cx="8" cy="8" r="6" /><path d="M8 7.2v3.6" /><path d="M8 5v.3" /></Fragment>)}{t(lang, 'nav.tips')}</button>
         </div>
         <span className="absolute right-2 top-1/2 -translate-y-1/2 z-10">{hintDot('day', dayList, 0, { align:'right' })}</span>
       </div>
 
       <nav className="bg-ground border-b border-hairline relative" id="hintsec-day-1">
         <span className="absolute right-2 top-1/2 -translate-y-1/2 z-10">{hintDot('day', dayList, 1, { align:'right' })}</span>
-        <div className={`${col} flex items-center gap-2 overflow-x-auto rail-scroll py-2`}>
+        <div className={`${col} flex items-center gap-2 overflow-x-auto rail-scroll py-2 no-scrollbar`}>
           {steps.map(s=>s.action ? (
             <button key={s.n} onClick={s.action} className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-hairline bg-white shrink-0 t-ink motion-safe:active:scale-95">
               {s.icon}
@@ -1382,16 +1541,23 @@ export default function Page(){
                       className="font-semibold text-lg leading-tight truncate text-left block w-full">{s.name}</button>
                     <div className="text-[11px]">
                       <StopRating stop={s} city={city} views={sumReelViews(s.name, reels)} lang={lang} />
-                      <button onClick={()=>setCompareId(compareId===s.place_id?null:s.place_id)} className="text-igblue font-semibold">{t(lang, 'row.compare')}</button>
                     </div>
                   </div>
+                  <div className="w-[72px] h-12 shrink-0 relative rounded-lg overflow-hidden bg-hairline self-center">
+                    <DayCover title={`${s.name} ${city}`} seed={`stoprow-${s.place_id}`} pick={0} genPlace={s.name} genCity={city} />
+                  </div>
+                  <div aria-hidden="true" className="w-px self-stretch bg-hairline shrink-0" />
                   <div className="flex flex-col gap-1 shrink-0 items-end">
                     {dayCount>1 && (
                       <button onClick={()=>setMoveId(moveId===s.place_id?null:s.place_id)}
                         className="text-xs text-igblue font-semibold">{t(lang, 'row.move')}</button>
                     )}
                     <button onClick={()=>setStops(stops.filter((_,j)=>j!==i))}
-                      className="text-xs text-igblue font-semibold">{t(lang, 'row.remove')}</button>
+                      aria-label={t(lang, 'row.remove')} title={t(lang, 'row.remove')}
+                      style={{color:ACCENT.bg}}
+                      className="w-7 h-7 grid place-items-center rounded-full t-ink motion-safe:active:scale-95">
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" /></svg>
+                    </button>
                   </div>
                 </div>
                 {i<stops.length-1 && (
@@ -1408,18 +1574,7 @@ export default function Page(){
                     </div>
                   </div>
                 )}
-                {compareId===s.place_id && (
-                  <div className="ml-[72px] mb-2 border border-hairline rounded-lg bg-white overflow-hidden animate-pop">
-                    <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider opacity-60">{t(lang, 'row.cmpsimilar')}</div>
-                    {compareAlts().map(a=>(
-                      <div key={a.place_id} className="flex items-center gap-2 px-3 py-1.5 border-t border-hairline">
-                        <span className="flex-1 min-w-0 truncate text-sm font-medium">{a.name}</span>
-                        <button onClick={()=>{ addStop({ place_id:a.place_id, name:a.name, address:a.address, lat:a.lat, lng:a.lng }); setCompareId(null); }}
-                          className="text-xs text-igblue font-semibold shrink-0">{t(lang, 'row.add')}</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+
               </Fragment>
             ))}
           </div>
@@ -1465,6 +1620,10 @@ export default function Page(){
               </div>
             ))}
           </div>
+          ) : liveCatLoading ? (
+            <div className="mt-3 flex gap-2 overflow-x-auto rail-scroll pb-2" aria-hidden="true">
+              {[0,1,2].map((i)=>(<div key={i} className="w-60 shrink-0 rounded-lg bg-hairline h-32 motion-safe:animate-pulse" />))}
+            </div>
           ) : (
             <div className="mt-3 border border-dashed border-ink/30 rounded-lg px-4 py-6 text-xs opacity-60">{(restaurants[city]||[]).some(r=>inFoodCat(r, foodCat)) ? t(lang, 'common.added') : t(lang, 'food.empty.none', { cat: foodCatLabel(foodCat, lang), city })}</div>
           )}
@@ -1497,12 +1656,15 @@ export default function Page(){
 
       <footer className="mt-16 border-t border-hairline bg-white">
         <div className={`${col} py-4 font-mono text-[11px] tnum flex justify-between gap-3`}>
-          <span>NOMAD</span>
+          <span className="flex items-center gap-1.5"><NomadLogo size={14} />NOMAD</span>
           <span>{city.toUpperCase()} · {dayName(activeDay+1, lang).toUpperCase()} · {stopsUnit(stops.length, lang).toUpperCase()}{stops.length>1 ? ` · ${totalMin} MIN` : ''}</span>
         </div>
       </footer>
-      <div className={hintPosAt('day')>=0?'hidden':''}>
+      <div className={asstWrapCls('day', dayList)}>
         <ChatWidget trip={{ city, days: shareDays.map(d=>d.map(s=>({ name:s.name, rating:s.rating ?? null }))), food: foodPicks.map(f=>({ name:f.name })), persona }} lang={lang} onEditStart={resolveEdit} onEditApply={applyEdit} />
+      </div>
+      <div id="hintsec-day-5" className={`fixed bottom-4 right-4 w-12 h-12 pointer-events-none ${asstOpen('day', dayList)?'z-[60]':''}`}>
+        <span className="absolute -top-2 -right-2">{hintDot('day', dayList, 5, { above:true, align:'right' })}</span>
       </div>
     </div>
   );

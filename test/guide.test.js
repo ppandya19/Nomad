@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { dayHighlight, tripHeadline, tripHighlights, shareTripText } from '../lib/guide.js';
+import { dayHighlight, tripHeadline, tripHighlights, shareTripText, tipsDigestData } from '../lib/guide.js';
 
 const CTX = { reels: {}, persona: ['Foodie'] };
 const star = { place_id: 'local-chelsea', name: 'Chelsea Market', rating: 5, ratings_total: 20000 };
@@ -59,9 +59,9 @@ describe('tripHighlights', ()=>{
     assert.equal(out.length, 4);
     assert.match(out.join('\n'), /Day 2 is still a blank page/);
   });
-  it('nudges the food-less day by number', ()=>{
+  it('keeps highlights to landmarks and stops, never food nags', ()=>{
     const out = tripHighlights({ days: [[star, mid]], ...CTX });
-    assert.match(out.join('\n'), /Day 1 has no food break/);
+    assert.doesNotMatch(out.join('\n'), /food/i);
   });
 });
 
@@ -81,9 +81,47 @@ describe('locales', ()=>{
 describe('shareTripText', ()=>{
   it('headlines the trip and routes each day', ()=>{
     const s = shareTripText({ city: 'Chicago', days: [[star, mid], []], ...CTX });
-    assert.match(s, /Chicago/);
+    assert.match(s, /^🗺️ My Chicago trip: 2 days/);
     assert.match(s, /don't miss Chelsea Market/);
-    assert.match(s, /Day 1: Chelsea Market → The High Line/);
-    assert.match(s, /Day 2: open day/);
+    assert.match(s, /📍 \*Day 1\*: Chelsea Market → The High Line/);
+    assert.match(s, /📍 \*Day 2\*: open day/);
+  });
+  const resto = [
+    { name: 'Joe Pizza', cat: 'local special', cuisine: 'Pizza', meal: 'lunch', rating: '4.5', reviews: '5k', lat: 40.7581, lng: -73.9855 },
+    { name: 'Blue Bottle', cat: 'coffee', cuisine: 'Coffee', meal: 'coffee', rating: '4.8', reviews: '2k', lat: 40.7582, lng: -73.9856 },
+    { name: 'Le Bernardin', cat: 'fine dine', cuisine: 'French', meal: 'dinner', rating: '4.9', reviews: '8k', lat: 40.7583, lng: -73.9857 },
+  ];
+  const nyc = [{ place_id: 'local-1', name: 'Times Square', lat: 40.758, lng: -73.9855 }];
+  it('adds top-rated food near each day', ()=>{
+    const s = shareTripText({ city: 'New York', days: [nyc], restaurants: resto, ...CTX });
+    assert.match(s, /🍽️ \*Food nearby:\* Le Bernardin \(4\.9\), Blue Bottle \(4\.8\), Joe Pizza \(4\.5\)/);
+  });
+  it('skips food already added anywhere in the trip', ()=>{
+    const ate = { place_id: 'food-9', name: 'Joe Pizza', lat: 40.7581, lng: -73.9855 };
+    const s = shareTripText({ city: 'New York', days: [nyc, [ate]], restaurants: resto, ...CTX });
+    assert.doesNotMatch(s, /Joe Pizza \(4\.5\)/);
+    assert.match(s, /Blue Bottle \(4\.8\)/);
+  });
+  it('notes the daily travel time when provided', ()=>{
+    const s = shareTripText({ city: 'New York', days: [nyc, []], dayMoveMin: [50, 0], ...CTX });
+    assert.match(s, /📍 \*Day 1\* \(~50 min on the move\): Times Square/);
+    assert.match(s, /📍 \*Day 2\*: open day/);
+  });
+  it('closes with a localized tips digest and rental names', ()=>{
+    const s = shareTripText({ city: 'New York', days: [nyc], rentals: [{ name: 'Enterprise' }, { name: 'Hertz' }], ...CTX });
+    assert.match(s, /💡 \*Travel tips:\*/);
+    assert.match(s, /🧭 \*Getting around:\* .*subway/);
+    assert.match(s, /🚗 \*Rental car:\* Enterprise, Hertz — /);
+    assert.match(s, /🎒 \*Packing essentials:\* /);
+    const zh = shareTripText({ city: 'New York', days: [nyc], lang: 'zh', ...CTX });
+    assert.match(zh, /💡 \*旅行贴士:\*/);
+  });
+  it('shares structured tips data with the pdf renderer', ()=>{
+    const d = tipsDigestData({ city: 'New York', rentals: [{ name: 'Enterprise', url: 'https://e.example' }, { name: 'NoUrl' }], lang: 'en' });
+    assert.equal(d.title, 'Travel tips');
+    assert.equal(d.rows.length, 5);
+    assert.equal(d.rows[0].label, 'Getting around');
+    assert.match(d.rows[0].body, /subway/);
+    assert.deepEqual(d.rows[1].agencies, [{ name: 'Enterprise', url: 'https://e.example' }]);
   });
 });

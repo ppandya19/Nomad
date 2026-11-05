@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { t, dayName } from '../lib/i18n';
 import { createToolAcc } from '../lib/chat-edit';
+import NomadLogo from './NomadLogo';
 
 const fmtC = (n)=>n>=1000 ? `${(n/1000).toFixed(1).replace('.0','')}k` : `${n}`;
 
@@ -144,7 +145,7 @@ export default function ChatWidget({ trip, lang='en', onEditStart=null, onEditAp
       {open && (
         <div className="fixed bottom-4 right-4 z-50 w-[min(92vw,380px)] h-[480px] max-h-[72vh] bg-white border border-hairline rounded-xl shadow-xl flex flex-col overflow-hidden animate-pop">
           <div className="flex items-center justify-between px-4 py-3 border-b border-hairline">
-            <div className="font-bold">{t(lang, 'chat.title')}</div>
+            <div className="font-bold flex items-center gap-2"><NomadLogo size={18} />{t(lang, 'chat.title')}</div>
             <button onClick={()=>setOpen(false)} aria-label={t(lang, 'chat.close')}
               className="text-xs text-igblue font-semibold">{t(lang, 'chat.close')}</button>
           </div>

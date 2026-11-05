@@ -4,7 +4,7 @@ import { buildTripContext, restaurantContext } from '../../../lib/trip-context.j
 import { LANG_NAMES } from '../../../lib/i18n.js';
 import { CHAT_TOOLS, EDIT_RULES } from '../../../lib/chat-edit.js';
 
-const SYSTEM = `You are Nomad's trip assistant inside a travel-planning app. Help with the traveler's trip using the context below plus general travel knowledge: days, stops, food, timing. Also recommend places and restaurants in and around the trip city that are NOT on the itinerary — e.g. a pizza spot near a stop — preferring the city's top-rated list in context when it fits, otherwise famous spots from your own knowledge. Reference real stop names and day numbers from the context. Be concise: short paragraphs or bullets, no fluff. Never invent ratings, review counts, or opening hours — only cite numbers shown in the context.`;
+const SYSTEM = `You are Nomad Assistant inside a travel-planning app. Help with the traveler's trip using the context below plus general travel knowledge: days, stops, food, timing. Also recommend places and restaurants in and around the trip city that are NOT on the itinerary — e.g. a pizza spot near a stop — preferring the city's top-rated list in context when it fits, otherwise famous spots from your own knowledge. Reference real stop names and day numbers from the context. Be concise: short paragraphs or bullets, no fluff. Never invent ratings, review counts, or opening hours — only cite numbers shown in the context.`;
 
 // POST { messages: [{role, content}], trip } -> streamed chat completion.
 // Key stays server-side; the browser never sees MODEL_API_KEY.

@@ -58,6 +58,18 @@ describe('foodPicksFor', ()=>{
     const picks = foodPicksFor(spots, { category: 'coffee', stops: [...near, { name: 'A Cafe', lat: 40.0, lng: -74.0 }] });
     assert.ok(!names(picks).includes('A Cafe'));
   });
+  it('excludes spots added on other days via exclude', ()=>{
+    const other = [{ name: 'B Coffee', lat: 41.0, lng: -74.0 }];
+    const picks = foodPicksFor(spots, { category: 'coffee', stops: near, exclude: [...near, ...other] });
+    assert.ok(!names(picks).includes('B Coffee'));
+    assert.ok(names(picks).includes('A Cafe'));
+  });
+  it('still anchors proximity to the day stops, not exclude', ()=>{
+    const farDay = [{ name: 'X', lat: 42.0, lng: -74.0 }];
+    const picks = foodPicksFor(spots, { category: 'coffee', stops: near, exclude: [...near, ...farDay], maxKm: 1 });
+    assert.ok(names(picks).includes('A Cafe'));
+    assert.ok(!names(picks).includes('E Far'));
+  });
   it('falls back to rating order with no stops, unrated last', ()=>{
     assert.deepEqual(names(foodPicksFor(spots, { category: 'coffee', stops: [], liveByName: live })), ['E Far', 'B Coffee', 'A Cafe', 'D Roast']);
   });

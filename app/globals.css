@@ -48,6 +48,13 @@ input {
 .rail-scroll::-webkit-scrollbar-thumb {
   background: var(--color-ink);
 }
+/* Sticky top nav rails keep swipe-scroll but hide the scrollbar chrome. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 
 /* IG embeds: contain unprocessed boxes so fallback text can't overlap,
    and hide the fallback link once the iframe renders. */
